@@ -39,3 +39,7 @@ ham
 t
 ```
 
+## contributions
+
+...are very welcome, including docs, issues, and pull requests.
+Please note that this project has adopted a [code of conduct](CODE_OF_CONDUCT.md), and contributors are expected to adhere to it.
