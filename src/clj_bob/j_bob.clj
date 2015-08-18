@@ -1,5 +1,5 @@
 (ns clj-bob.j-bob
-  (:refer-clojure :exclude [cons num + < atom bound? var?])
+  (:refer-clojure :exclude [cons if num + < atom bound? var?])
   (:require [clj-bob.lang :refer :all]))
 
 (defun list0 () '())
