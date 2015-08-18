@@ -34,9 +34,9 @@
 (defun if-c (Q A E) (tag 'if (list3 Q A E)))
 (defun if? (x)
   (if (tag? 'if x) (list3? (untag x)) 'nil))
-(defun if-Q (e) (elem1 (untag e)))
-(defun if-A (e) (elem2 (untag e)))
-(defun if-E (e) (elem3 (untag e)))
+(defun if-q (e) (elem1 (untag e)))
+(defun if-a (e) (elem2 (untag e)))
+(defun if-e (e) (elem3 (untag e)))
 
 (defun app-c (name args) (cons name args))
 (defun app? (x)
@@ -75,8 +75,8 @@
 (defun dethm-formals (def) (elem2 (untag def)))
 (defun dethm-body (def) (elem3 (untag def)))
 
-(defun if-QAE (e)
-  (list3 (if-Q e) (if-A e) (if-E e)))
+(defun if-qAE (e)
+  (list3 (if-q e) (if-a e) (if-e e)))
 (defun QAE-if (es)
   (if-c (elem1 es) (elem2 es) (elem3 es)))
 
@@ -177,7 +177,7 @@
         (exprs? defs vars (cdr es))
         (if (if? (car es))
           (if (exprs? defs vars
-                (if-QAE (car es)))
+                (if-qAE (car es)))
             (exprs? defs vars (cdr es))
             'nil)
           (if (app? (car es))
@@ -418,7 +418,7 @@
           (cons
             (QAE-if
               (sub-es vars args
-                (if-QAE (car es))))
+                (if-qAE (car es))))
             (sub-es vars args (cdr es)))
           (cons
             (app-c (app-name (car es))
@@ -437,7 +437,7 @@
         (exprs-recs f (cdr es))
         (if (if? (car es))
           (list-union
-            (exprs-recs f (if-QAE (car es)))
+            (exprs-recs f (if-qAE (car es)))
             (exprs-recs f (cdr es)))
           (if (equal (app-name (car es)) f)
             (list-union
@@ -470,12 +470,12 @@
     (conjunction
       (list-extend
         (totality-meas meas formals
-          (expr-recs f (if-Q e)))
-        (if-c-when-necessary (if-Q e)
+          (expr-recs f (if-q e)))
+        (if-c-when-necessary (if-q e)
           (totality-if meas f formals
-            (if-A e))
+            (if-a e))
           (totality-if meas f formals
-            (if-E e)))))
+            (if-e e)))))
     (conjunction
       (totality-meas meas formals
         (expr-recs f e)))))
@@ -505,10 +505,10 @@
   (if (if? e)
     (implication
       (induction-prems vars claim
-        (expr-recs f (if-Q e)))
-      (if-c-when-necessary (if-Q e)
-        (induction-if vars claim f (if-A e))
-        (induction-if vars claim f (if-E e))))
+        (expr-recs f (if-q e)))
+      (if-c-when-necessary (if-q e)
+        (induction-if vars claim f (if-a e))
+        (induction-if vars claim f (if-e e))))
     (implication
       (induction-prems vars claim
         (expr-recs f e))
@@ -528,20 +528,20 @@
 
 (defun find-focus-at-direction (dir e)
   (if (equal dir 'Q)
-    (if-Q e)
+    (if-q e)
     (if (equal dir 'A)
-      (if-A e)
+      (if-a e)
       (if (equal dir 'E)
-        (if-E e)
+        (if-e e)
         (get-arg dir (app-args e))))))
 
 (defun rewrite-focus-at-direction (dir e1 e2)
   (if (equal dir 'Q)
-    (if-c e2 (if-A e1) (if-E e1))
+    (if-c e2 (if-a e1) (if-e e1))
     (if (equal dir 'A)
-      (if-c (if-Q e1) e2 (if-E e1))
+      (if-c (if-q e1) e2 (if-e e1))
       (if (equal dir 'E)
-        (if-c (if-Q e1) (if-A e1) e2)
+        (if-c (if-q e1) (if-a e1) e2)
         (app-c (app-name e1)
           (set-arg dir (app-args e1) e2))))))
 
@@ -582,7 +582,7 @@
   (if (atom path)
     'nil
     (if (equal (car path) 'A)
-      (if (equal (if-Q e) prem)
+      (if (equal (if-q e) prem)
         't
         (prem-A? prem (cdr path)
           (find-focus-at-direction (car path)
@@ -595,7 +595,7 @@
   (if (atom path)
     'nil
     (if (equal (car path) 'E)
-      (if (equal (if-Q e) prem)
+      (if (equal (if-q e) prem)
         't
         (prem-E? prem (cdr path)
           (find-focus-at-direction (car path)
@@ -606,10 +606,10 @@
 
 (defun follow-prems (path e thm)
   (if (if? thm)
-    (if (prem-A? (if-Q thm) path e)
-      (follow-prems path e (if-A thm))
-      (if (prem-E? (if-Q thm) path e)
-        (follow-prems path e (if-E thm))
+    (if (prem-A? (if-q thm) path e)
+      (follow-prems path e (if-a thm))
+      (if (prem-E? (if-q thm) path e)
+        (follow-prems path e (if-e thm))
         thm))
     thm))
 
@@ -815,9 +815,9 @@
       (equal (if 't x y) x))
     (dethm if-false (x y)
       (equal (if 'nil x y) y))
-    (dethm if-nest-E (x y z)
+    (dethm if-nest-e (x y z)
       (if x 't (equal (if x y z) z)))
-    (dethm if-nest-A (x y z)
+    (dethm if-nest-a (x y z)
       (if x (equal (if x y z) y) 't))
     (dethm cons-car+cdr (x)
       (if (atom x)

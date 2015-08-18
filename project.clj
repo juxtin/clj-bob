@@ -1,6 +1,5 @@
-(defproject clj-bob "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.6.0"]])
+(defproject clj-bob "0.1.0"
+  :description "The Little Prover in Clojure"
+  :url "https://github.com/holguinj/clj-bob"
+  :dependencies [[org.clojure/clojure "1.7.0"]]
+  :repl-options {:init-ns clj-bob.j-bob})

@@ -1,5 +1,6 @@
 (ns clj-bob.lang
-  (:refer-clojure :exclude [atom cons + < num if]))
+  (:refer-clojure :exclude [atom cons + < num if])
+  (:require [clojure.string :as str]))
 
 (defn if-nil [q a e]
   (if (or (nil? q)
@@ -7,23 +8,29 @@
     (e)
     (a)))
 
-(defmacro if
+(defn if
   [Q A E]
   (if-nil Q
           (fn [] A)
           (fn [] E)))
 
 (def s-car first)
-(def s-cdr next)
+(def s-cdr rest)
 (def s-+ clojure.core/+)
 (def s-< clojure.core/<)
 
 (defn cons [h t]
   (apply list (concat [h] t)))
 
-(def equal =)
+(defn equal
+  "HAHAHAHA equality in Scheme is very weak."
+  [x y]
+  (= (str/lower-case x)
+     (str/lower-case y)))
 
-(def pair? list?)
+(defn pair? [x]
+  (and (list? x)
+       (seq x)))
 
 ;; this is a bit different
 (defn num [x]
