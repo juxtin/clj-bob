@@ -14,13 +14,27 @@
           (fn [] A)
           (fn [] E)))
 
-(def s-car first)
-(def s-cdr rest)
+(defrecord Pair [car cdr])
+(defmethod print-method Pair [p writer]
+  (.write writer (format "(%s . %s)" (:car p) (:cdr p))))
+
+(defn s-car [x]
+  (if (instance? Pair x)
+    (:car x)
+    (first x)))
+
+(defn s-cdr [x]
+  (if (instance? Pair x)
+    (:cdr x)
+    (rest x)))
+
 (def s-+ clojure.core/+)
 (def s-< clojure.core/<)
 
 (defn cons [h t]
-  (apply list (concat [h] t)))
+  (if (sequential? t)
+    (apply list (concat [h] t))
+    (Pair. h t)))
 
 (defn equal
   "HAHAHAHA equality in Scheme is very weak."
@@ -29,8 +43,9 @@
      (str/lower-case y)))
 
 (defn pair? [x]
-  (and (list? x)
-       (seq x)))
+  (or (instance? Pair x)
+      (and (list? x)
+           (seq x))))
 
 ;; this is a bit different
 (defn num [x]
@@ -67,7 +82,7 @@
 
 (defn nat? [x]
   (if (and (integer? x)
-           (< x 0))
+           (< 0 x))
     't
     'nil))
 
